@@ -25,8 +25,7 @@ class WeakCrypt
     protected byte[] plaintext = new byte[0];
     protected byte[] cyphertext = new byte[0];
 
-    public static void Main()
-    {
+    public static void Main() {
         Console.WriteLine();
         var secret1 = new WeakCrypt();
         secret1.SetPlaintext("This WeakCrypt. This is encrypted using "
@@ -67,8 +66,7 @@ class WeakCrypt
 
     public WeakCrypt(string p = "", string k = "")
     {
-        if (p != "" && k != "")
-        {
+        if (p != "" && k != "") {
             SetPlaintext(p);
             SetKey(k);
             Encrypt();
@@ -76,96 +74,77 @@ class WeakCrypt
         }
     }
     
-    public void SetPlaintext(string s)
-    {
+    public void SetPlaintext(string s) {
         plaintext = Encoding.UTF8.GetBytes(s);
     }
     
-    public string GetPlaintext()
-    {
+    public string GetPlaintext() {
         return Encoding.UTF8.GetString(plaintext);
     }
     
-    public void PrintPlaintext()
-    {
+    public void PrintPlaintext() {
         Console.WriteLine(Encoding.UTF8.GetString(plaintext));
     }
     
-    public void SetCyphertext(string s)
-    {
+    public void SetCyphertext(string s) {
         cyphertext = new byte[s.Length/2];
-        for (int i = 0; i < s.Length/2; i++)
-        {
+        for (int i = 0; i < s.Length/2; i++) {
             var tempString = s.Substring(2*i, 2);
             var tempValue = Convert.ToInt32(tempString, 16);
             cyphertext[i] = Convert.ToByte(tempValue);
         }
     }
     
-    public string GetCyphertext()
-    {
+    public string GetCyphertext() {
         string returnString = "";
-        foreach (byte b in cyphertext)
-        {
+        foreach (byte b in cyphertext) {
             returnString = returnString + String.Format("{0:x2}", b);
         }
         return returnString;
     }
     
-    public void PrintCyphertext()
-    {
-        foreach (byte b in cyphertext)
-        {
+    public void PrintCyphertext() {
+        foreach (byte b in cyphertext) {
             Console.Write("{0:x2}", b);
         }
         Console.WriteLine();
     }
     
-    public void SetKey(string s)
-    {
+    public void SetKey(string s) {
         key = Encoding.UTF8.GetBytes(s);
     }
     
-    public void Encrypt()
-    {
+    public void Encrypt() {
         key = getHash();
         cyphertext = new byte[plaintext.Length];
-        for (int i = 0; i < plaintext.Length; i++)
-        {
+        for (int i = 0; i < plaintext.Length; i++) {
             cyphertext[i] = (byte) (plaintext[i]^key[i]);
         }
     }
     
-    public void Decrypt()
-    {
+    public void Decrypt() {
         key = getHash();
         plaintext = new byte[cyphertext.Length];
-        for (int i = 0; i < cyphertext.Length; i++)
-        {
+        for (int i = 0; i < cyphertext.Length; i++) {
             plaintext[i] = (byte) (cyphertext[i]^key[i]);
         }
     }
         
-    protected virtual void printBytes(byte[] byteArray)
-    {
-        foreach (byte b in byteArray)
-        {
+    protected virtual void printBytes(byte[] byteArray) {
+        foreach (byte b in byteArray) {
             Console.Write("{0:x2}",b);
         }
         Console.WriteLine();
     }
         
-    protected virtual byte[] getHash()
-    {
+    protected virtual byte[] getHash() {
         var hashIterations = 242;
         List<byte> hashList = new List<byte>();
         var hash = new SHA256Managed();
         var hashLength = Math.Max(plaintext.Length, cyphertext.Length);
-        while (hashList.Count <= hashLength)
-        {
+        while (hashList.Count <= hashLength) {
             byte[] hashBytes = hash.ComputeHash(key);
-            for (var i = 1; i < hashIterations; i++)
-            {            
+            for (var i = 1; i < hashIterations; i++) {            
                 hashBytes = hash.ComputeHash(hashBytes);        
             }
             hashList.AddRange(hashBytes);
@@ -176,17 +155,14 @@ class WeakCrypt
 
 class StrongCrypt : WeakCrypt
 {
-    override protected byte[] getHash()
-    {
+    override protected byte[] getHash() {
         var hashIterations = 24200;
         List<byte> hashList = new List<byte>();
         var hash = new SHA512Managed();
         var hashLength = Math.Max(plaintext.Length, cyphertext.Length);
-        while (hashList.Count <= hashLength)
-        {
+        while (hashList.Count <= hashLength) {
             byte[] hashBytes = hash.ComputeHash(key);
-            for (var i = 1; i < hashIterations; i++)
-            {            
+            for (var i = 1; i < hashIterations; i++) {            
                 hashBytes = hash.ComputeHash(hashBytes);        
             }
             hashList.AddRange(hashBytes);
