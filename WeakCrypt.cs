@@ -64,8 +64,7 @@ class WeakCrypt
         Console.WriteLine();
     }
 
-    public WeakCrypt(string p = "", string k = "")
-    {
+    public WeakCrypt(string p = "", string k = "") {
         if (p != "" && k != "") {
             SetPlaintext(p);
             SetKey(k);
